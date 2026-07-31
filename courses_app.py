@@ -21,21 +21,27 @@ PRODUITS = {
         "Steak végétal", "Tofu", "Falafels",
     ],
     "🥛 Produits laitiers": [
-        "Lait", "Beurre", "Yaourts", "Fromage", "Crème fraîche",
+        "Lait", "Beurre", "Yaourts Grecque", "Crème fraîche", 
+        "Parmesan", "Mozzarella", "Feta", "Gruyère"
     ],
     "🍞 Épicerie": [
         "Pain", "Pâtes", "Riz", "Farine", "Sucre", "Huile d'olive",
-        "Café", "Thé", "Sel", "Conserves",
+        "Café", "Thé", "Sel", "Conserves", "Nutella",
+        "Papier alu", "Papier de cuisson",
     ],
     "🥤 Boissons": [
-        "Eau", "Jus de fruits", "Soda", "Vin", "Bière",
+        "Eau", "Jus de fruits", "Soda", "Vin", "Bière", "Tonic", "Grenadine",
     ],
     "🧴 Produits ménagers": [
         "Liquide vaisselle", "Éponges", "Papier toilette", "Sacs poubelle",
-        "Lessive", "Essuie-tout",
+        "Lessive", "Essuie-tout", "Liquide de rinçage",
+        "Pastilles lave-vaisselle", "Sel lave-vaisselle", "Javel",
     ],
     "🧼 Hygiène": [
-        "Shampoing", "Savon", "Dentifrice", "Déodorant", "Rasoirs",
+        "Shampoing", "Savon", "Dentifrice", "Déodorant", 
+    ],
+    "🌿 Herbes & Épices": [
+        "Basilic", "Menthe", "Paprika", "Cumin", "Ail semoule",
     ],
 }
 
