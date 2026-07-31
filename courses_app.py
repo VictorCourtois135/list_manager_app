@@ -5,30 +5,37 @@ import streamlit.components.v1 as components
 
 st.set_page_config(page_title="Ma liste de courses", page_icon="🛒", layout="wide")
 
+import unicodedata
+
 # ---------------------------------------------------------------------------
 # Données : produits disponibles par catégorie
 # ---------------------------------------------------------------------------
-PRODUITS = {
+PRODUITS_BRUTS = {
     "🥦 Légumes": [
-        "Tomates", "Oignons", "Carottes", "Pommes de terre", "Salade",
-        "Courgettes", "Poivrons", "Ail", "Champignons", "Concombre",
+        "Tomates", "Oignons", "Oignons nouveaux", "Carottes", "Pommes de terre",
+        "Salade", "Courgettes", "Poivrons", "Ail", "Champignons", "Concombre",
+        "Aubergines", "Radis",
     ],
     "🍎 Fruits": [
         "Pommes", "Bananes", "Oranges", "Fraises", "Citrons", "Raisins",
+        "Pêches", "Nectarines", "Myrtilles", "Avocats",
     ],
     "🥩 Protéines": [
         "Poulet", "Bœuf haché", "Saumon", "Jambon", "Œufs",
         "Steak végétal", "Tofu", "Falafels", "Chorizo",
+        "Cordon bleu", "Nuggets",
     ],
     "🥛 Produits laitiers": [
-        "Lait", "Beurre", "Yaourts", "Fromage", "Crème fraîche",
+        "Lait", "Beurre", "Yaourts", "Crème fraîche",
         "Parmesan", "Mozzarella", "Feta",
+        "Yaourt grec", "Beurre tartiné", "Crème épaisse", "Gruyère",
     ],
     "🍞 Épicerie": [
         "Pain", "Pâtes", "Riz", "Farine", "Sucre", "Huile d'olive",
-        "Café", "Thé", "Sel", "Conserves", "Nutella",
+        "Café", "Thé", "Sel", "Nutella",
         "Papier alu", "Papier de cuisson", "Sauce tomate", "Confiture",
         "Chocolat noir", "Chocolat au lait", "Sucre roux",
+        "Ketchup", "Sauce andalouse", "Mayonnaise", "Semoule",
     ],
     "🥤 Boissons": [
         "Eau", "Jus de fruits", "Soda", "Vin", "Bière", "Tonic", "Grenadine",
@@ -37,9 +44,12 @@ PRODUITS = {
         "Liquide vaisselle", "Éponges", "Papier toilette", "Sacs poubelle",
         "Lessive", "Essuie-tout", "Liquide de rinçage",
         "Pastilles lave-vaisselle", "Sel lave-vaisselle", "Javel",
+        "Boule sent-bon toilettes", "Pastille WC", "Produit toilettes",
+        "Spray salle de bain", "Spray vitres",
     ],
     "🧼 Hygiène": [
-        "Shampoing", "Savon", "Dentifrice", "Déodorant", "Rasoirs",
+        "Shampoing", "Dentifrice", "Déodorant",
+        "Gel douche", "Savon mains", "Brossette de brosse à dents",
     ],
     "🌿 Herbes & Épices": [
         "Basilic", "Menthe", "Paprika", "Cumin", "Ail semoule",
@@ -47,6 +57,17 @@ PRODUITS = {
     "🍿 Apéro": [
         "Chips", "Olives", "Saucisson", "Houmous", "Cacahuètes", "Biscuits apéritifs",
     ],
+}
+
+
+def cle_tri(mot):
+    """Clé de tri insensible aux accents et à la casse (ex: 'Éponges' après 'Essuie-tout')."""
+    mot = mot.replace("Œ", "Oe").replace("œ", "oe").replace("Æ", "Ae").replace("æ", "ae")
+    return unicodedata.normalize("NFKD", mot).encode("ascii", "ignore").decode().lower()
+
+
+PRODUITS = {
+    cat: sorted(produits, key=cle_tri) for cat, produits in PRODUITS_BRUTS.items()
 }
 
 # table inverse : produit -> catégorie (utile pour réinitialiser les cases à cocher)
