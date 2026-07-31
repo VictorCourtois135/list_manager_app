@@ -18,16 +18,17 @@ PRODUITS = {
     ],
     "🥩 Protéines": [
         "Poulet", "Bœuf haché", "Saumon", "Jambon", "Œufs",
-        "Steak végétal", "Tofu", "Falafels",
+        "Steak végétal", "Tofu", "Falafels", "Chorizo",
     ],
     "🥛 Produits laitiers": [
-        "Lait", "Beurre", "Yaourts Grecque", "Crème fraîche", 
-        "Parmesan", "Mozzarella", "Feta", "Gruyère"
+        "Lait", "Beurre", "Yaourts", "Fromage", "Crème fraîche",
+        "Parmesan", "Mozzarella", "Feta",
     ],
     "🍞 Épicerie": [
         "Pain", "Pâtes", "Riz", "Farine", "Sucre", "Huile d'olive",
         "Café", "Thé", "Sel", "Conserves", "Nutella",
-        "Papier alu", "Papier de cuisson",
+        "Papier alu", "Papier de cuisson", "Sauce tomate", "Confiture",
+        "Chocolat noir", "Chocolat au lait", "Sucre roux",
     ],
     "🥤 Boissons": [
         "Eau", "Jus de fruits", "Soda", "Vin", "Bière", "Tonic", "Grenadine",
@@ -38,10 +39,13 @@ PRODUITS = {
         "Pastilles lave-vaisselle", "Sel lave-vaisselle", "Javel",
     ],
     "🧼 Hygiène": [
-        "Shampoing", "Savon", "Dentifrice", "Déodorant", 
+        "Shampoing", "Savon", "Dentifrice", "Déodorant", "Rasoirs",
     ],
     "🌿 Herbes & Épices": [
         "Basilic", "Menthe", "Paprika", "Cumin", "Ail semoule",
+    ],
+    "🍿 Apéro": [
+        "Chips", "Olives", "Saucisson", "Houmous", "Cacahuètes", "Biscuits apéritifs",
     ],
 }
 
@@ -159,19 +163,46 @@ col_choix, col_liste = st.columns([1.4, 1])
 
 with col_choix:
     st.subheader("Choisir les produits")
-    tabs = st.tabs(list(PRODUITS.keys()))
 
-    for tab, (cat, produits) in zip(tabs, PRODUITS.items()):
-        with tab:
+    recherche = st.text_input(
+        "🔍 Rechercher un produit",
+        key="recherche_produit",
+        placeholder="Tape le nom d'un produit… (ex : tomate)",
+    )
+
+    if recherche.strip():
+        terme = recherche.strip().lower()
+        resultats = [
+            (cat, produit)
+            for cat, produits in PRODUITS.items()
+            for produit in produits
+            if terme in produit.lower()
+        ]
+        if resultats:
             cols = st.columns(2)
-            for i, produit in enumerate(produits):
+            for i, (cat, produit) in enumerate(resultats):
                 with cols[i % 2]:
                     st.checkbox(
-                        produit,
+                        f"{produit}  ·  {cat.split(' ', 1)[1]}",
                         key=f"chk_{cat}_{produit}",
                         on_change=toggle_produit,
                         args=(cat, produit),
                     )
+        else:
+            st.info("Aucun produit trouvé. Ajoute-le en produit personnalisé ci-dessous 👇")
+    else:
+        tabs = st.tabs(list(PRODUITS.keys()))
+        for tab, (cat, produits) in zip(tabs, PRODUITS.items()):
+            with tab:
+                cols = st.columns(2)
+                for i, produit in enumerate(produits):
+                    with cols[i % 2]:
+                        st.checkbox(
+                            produit,
+                            key=f"chk_{cat}_{produit}",
+                            on_change=toggle_produit,
+                            args=(cat, produit),
+                        )
 
     st.divider()
     st.subheader("Ajouter un produit personnalisé")
