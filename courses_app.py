@@ -1,24 +1,26 @@
 import json
+import unicodedata
 
 import streamlit as st
 import streamlit.components.v1 as components
 
 st.set_page_config(page_title="Ma liste de courses", page_icon="🛒", layout="wide")
 
-import unicodedata
-
 # ---------------------------------------------------------------------------
 # Données : produits disponibles par catégorie
 # ---------------------------------------------------------------------------
 PRODUITS_BRUTS = {
+    "🍎 Fruits": [
+        "Pommes", "Bananes", "Oranges", "Fraises", "Citrons", "Raisins",
+        "Pêches", "Nectarines", "Myrtilles", "Avocats",
+    ],
     "🥦 Légumes": [
         "Tomates", "Oignons", "Oignons nouveaux", "Carottes", "Pommes de terre",
         "Salade", "Courgettes", "Poivrons", "Ail", "Champignons", "Concombre",
         "Aubergines", "Radis",
     ],
-    "🍎 Fruits": [
-        "Pommes", "Bananes", "Oranges", "Fraises", "Citrons", "Raisins",
-        "Pêches", "Nectarines", "Myrtilles", "Avocats",
+    "🌿 Herbes & Épices": [
+        "Basilic", "Menthe", "Paprika", "Cumin", "Ail semoule",
     ],
     "🥩 Protéines": [
         "Poulet", "Bœuf haché", "Saumon", "Jambon", "Œufs",
@@ -37,6 +39,9 @@ PRODUITS_BRUTS = {
         "Chocolat noir", "Chocolat au lait", "Sucre roux",
         "Ketchup", "Sauce andalouse", "Mayonnaise", "Semoule",
     ],
+    "🍿 Apéro": [
+        "Chips", "Olives", "Saucisson", "Houmous", "Cacahuètes", "Biscuits apéritifs",
+    ],
     "🥤 Boissons": [
         "Eau", "Jus de fruits", "Soda", "Vin", "Bière", "Tonic", "Grenadine",
     ],
@@ -51,12 +56,6 @@ PRODUITS_BRUTS = {
         "Shampoing", "Dentifrice", "Déodorant",
         "Gel douche", "Savon mains", "Brossette de brosse à dents",
     ],
-    "🌿 Herbes & Épices": [
-        "Basilic", "Menthe", "Paprika", "Cumin", "Ail semoule",
-    ],
-    "🍿 Apéro": [
-        "Chips", "Olives", "Saucisson", "Houmous", "Cacahuètes", "Biscuits apéritifs",
-    ],
 }
 
 
@@ -66,6 +65,8 @@ def cle_tri(mot):
     return unicodedata.normalize("NFKD", mot).encode("ascii", "ignore").decode().lower()
 
 
+# Les catégories gardent l'ordre défini ci-dessus (parcours logique de courses) ;
+# seuls les produits à l'intérieur de chaque catégorie sont triés alphabétiquement.
 PRODUITS = {
     cat: sorted(produits, key=cle_tri) for cat, produits in PRODUITS_BRUTS.items()
 }
@@ -200,30 +201,26 @@ with col_choix:
             if terme in produit.lower()
         ]
         if resultats:
-            cols = st.columns(2)
-            for i, (cat, produit) in enumerate(resultats):
-                with cols[i % 2]:
-                    st.checkbox(
-                        f"{produit}  ·  {cat.split(' ', 1)[1]}",
-                        key=f"chk_{cat}_{produit}",
-                        on_change=toggle_produit,
-                        args=(cat, produit),
-                    )
+            for cat, produit in resultats:
+                st.checkbox(
+                    f"{produit}  ·  {cat.split(' ', 1)[1]}",
+                    key=f"chk_{cat}_{produit}",
+                    on_change=toggle_produit,
+                    args=(cat, produit),
+                )
         else:
             st.info("Aucun produit trouvé. Ajoute-le en produit personnalisé ci-dessous 👇")
     else:
         tabs = st.tabs(list(PRODUITS.keys()))
         for tab, (cat, produits) in zip(tabs, PRODUITS.items()):
             with tab:
-                cols = st.columns(2)
-                for i, produit in enumerate(produits):
-                    with cols[i % 2]:
-                        st.checkbox(
-                            produit,
-                            key=f"chk_{cat}_{produit}",
-                            on_change=toggle_produit,
-                            args=(cat, produit),
-                        )
+                for produit in produits:
+                    st.checkbox(
+                        produit,
+                        key=f"chk_{cat}_{produit}",
+                        on_change=toggle_produit,
+                        args=(cat, produit),
+                    )
 
     st.divider()
     st.subheader("Ajouter un produit personnalisé")
